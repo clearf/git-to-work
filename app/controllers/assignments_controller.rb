@@ -10,6 +10,15 @@ class AssignmentsController < ApplicationController
   # GET /assignments/1
   # GET /assignments/1.json
   def show
+    uniq_students = @assignment.students.uniq do |student| 
+      student.id
+    end
+    @contributions = []
+    uniq_students.each do |student|
+      @contributions << @assignment.contributions.where(student_id: student.id, 
+                                                       assignment_id: @assignment.id).first
+                                                       #order: 'contribution_updated_at desc'
+    end
   end
 
   # GET /assignments/new

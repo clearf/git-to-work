@@ -30,5 +30,18 @@
   <%= @assignment.due_date %>
 </p>
 
+<p>
+  <strong>Completed</strong>
+  <ul>
+    <% @contributions.each do |contribution| %>
+    <li> 
+      <a href='<%= contribution.url %>/files' ><%= contribution.student.name %></a> 
+      <%= contribution.status %> 
+    </li>
+    
+    <% end %> 
+  </ul>
+</p>
+
 <%= link_to 'Edit', edit_assignment_path(@assignment) %> |
 <%= link_to 'Back', assignments_path %>
