@@ -3,47 +3,40 @@ require 'optparse'
 require 'pry'
 require_relative '../../config/environment.rb'
 
-
-
-def parse_students(filename=nil)
-  students={}
-  filename ||='students.txt'
-  student_data = File.new(filename)
-  student_data.each do |line| 
-    data = line.chomp.split('|')
-    students[data[0]]={name: data[1], email: data[2]}
+class StudentImporter
+  def initialize(filename=nil, course=nil)
+    @filename = filename ||'students.txt'
+    @students = {}
+    @course = course  || 'WDI June 2013'
   end
-  return students
-end
-students = parse_students
 
-def parse_assignments_file(filename=nil)
-  # Parse assignments file 
-  assignments=[]
-  filename ||='homework_assignments.txt'
-  homework_strings = File.new(filename)
-  homework_strings.each do |line| 
-    login, repo = line.split('/')
-    if login and repo
-      assignments << {login: login, repo:repo}
+  def add_students_to_db()
+    if @students.empty?
+      parse_students_file
+    end
+    @students.each do |github_login, student_profile| 
+      student = Student.where(github_login: github_login).first_or_initialize
+      student.update_attributes(github_login: github_login, name: student_profile[:name], 
+                                email: student_profile[:email], course: @course)
     end
   end
-  return assignments
+
+  private
+
+  def parse_students_file()
+    student_data = File.new(@filename)
+    student_data.each do |line|
+      data = line.chomp.split('|')
+      @students[data[0]]={name: data[1], email: data[2]}
+    end
+  end
 end
 
-options = {}
-OptionParser.new do |opts|
-  opts.banner = "Usage: #{__FILE__} [options]"
-  opts.on('--summary', 'print out a summary') { options[:control] = "summary" }
-  opts.on('--assignment', 'drill down into a specific assignment') { options[:control] = "assignment" }
-  opts.on('-v', '--verbose', 'verbose') { |v| options[:verbose] = v }
-end.parse!
-
 class GithubInterface
-  attr_accessor :students, :options
-  attr_reader :github
-
-  def initialize(options, students={})
+  attr_accessor :options
+  attr_reader :github, :collaborators
+  
+  def initialize(options)
     @github = Github.new do |config|
       config.client_id = ENV['GIT_CLIENT_ID']
       config.client_secret = ENV['GIT_CLIENT_SECRET']
@@ -54,12 +47,10 @@ class GithubInterface
       config.adapter     = :net_http
       config.ssl         = {:verify => false}
     end
-    @students = students
     @options = options
     @collaborators = {}
-    @missing_students = {}
   end
-
+  
   def process_pull_requests(owner, repo)
     pull_requests = []
     @collaborators[key(owner,repo)] = []
@@ -69,7 +60,7 @@ class GithubInterface
     rescue Github::Error::NotFound
       puts "Missing repository #{repo} for user #{owner}"
     rescue Github::Error::Forbidden
-      abort "Forbidden: Too many api calls. Perhaps your API KEY environment variables aren't initialized?"
+      abort "Forbidden: Too many api calls. Perhaps your API KEY environment variables are not initialized?"
     end
     pull_requests.flatten!
     pull_requests.each do |pull_request| 
@@ -78,95 +69,76 @@ class GithubInterface
       begin
         repo_collaborator_list = @github.repos.collaborators.list(repo_owner, repo_name)
         repo_collaborator_list.body.each do |collaborator| 
-          @collaborators[key(owner,repo)] << collaborator['login']
+          collaborator = {github_login: collaborator['login'], 
+            created_at: pull_request['head']['repo']['created_at'], 
+            updated_at: pull_request['head']['repo']['updated_at'], 
+            status: pull_request['state'], 
+            url: pull_request['html_url'] 
+          }
+          @collaborators[key(owner,repo)] << collaborator
         end
       rescue Github::Error::NotFound
         puts "Missing repository #{repo} for user #{owner}"
       rescue Github::Error::Forbidden
-        abort "Forbidden: Too many api calls. Perhaps your API KEY environment variables aren't initialized?"
+        abort "Forbidden: Too many api calls. Perhaps your API KEY environment variables are not initialized?"
       end
     end 
-    @missing_students[key(owner,repo)]= (@students.keys) - @collaborators[key(owner, repo)]
-  end
-
-  def missing_students(login,repo)
-    unless @missing_students[key(login,repo)]
-      self.process_pull_requests(login,repo)
-    end
-    return @missing_students[key(login,repo)]
-  end
-
-  def print_missing_students(login, repo, verbose = nil) 
-    missing_students = self.missing_students(login,repo)
-    if missing_students.length > 0 
-      puts "******************"
-      puts "#{repo}"
-      if verbose || self.verbose?
-        puts "#{missing_students.length} student(s) not turned in" 
-        puts "******************"
-        missing_students.each do |missing_student| 
-          puts "#{students[missing_student][:name]} <#{students[missing_student][:email]}>"
-        end
-        puts "******************"
-      else
-        puts "Missing #{missing_students.length} assignments"
-      end
-    end
   end
   
-  def verbose?
-    @options[:verbose]
-  end
-
   def key(owner,name)
-    return "#{owner}/#{name}"
+    return "#{owner}/#{name}"  
   end
 end
 
+options = {}
+OptionParser.new do |opts|
+  opts.banner = "Usage: #{__FILE__} [options]"
+  opts.on('--assignment=id', 'Parse data for a specific assignment') { |v| 
+    options[:assignment] = v 
+    options[:control] = "assignment"
+  }
+  opts.on('--students', 'Parse data for a specific assignment') { options[:control] = "students" }
+  opts.on('-v', '--verbose', 'verbose') { |v| options[:verbose] = v }
+end.parse!
 
-github_intf = GithubInterface.new(options, students)
+github_intf = GithubInterface.new(options)
 
+def update_assignment(assignment, github_intf)
+  login, repo = assignment[:github_login], assignment[:github_repo]
+  github_intf.process_pull_requests(login, repo)
 
-case github_intf.options[:control]
-when 'assignment'
-  assignments = parse_assignments_file
-  puts "Choose assignment"
-  assignments.each_with_index do |assignments, index|
-    puts "#{index+1}) #{assignments[:login]}/#{assignments[:repo]}"
+  # Clear old assignments out
+  assignment.students.clear
+
+  students = []
+  github_intf.collaborators[github_intf.key(login,repo)].each do |collaborator|
+    student = Student.where(github_login: collaborator[:github_login]).first
+    if student
+      assignment.students << student
+      # Get the contribution that was just created
+      contribution = assignment.contributions.last
+      contribution.update_attributes(url: collaborator[:url], 
+                                     contribution_created_at: collaborator[:created_at], 
+                                     contribution_updated_at: collaborator[:updated_at], 
+                                     status: collaborator[:status] ) 
+    end
   end
-  assignment = gets.chomp.to_i
-  owner = assignments[assignment-1][:login] 
-  repo = assignments[assignment-1][:repo] 
-  github_intf.process_pull_requests(owner, repo)
-  github_intf.print_missing_students(owner,repo, true)
-when "summary"
-  assignments = parse_assignments_file
-  assignments.each do |assignment| 
-    owner = assignment[:login] 
-    repo = assignment[:repo] 
-    github_intf.print_missing_students(owner,repo)
-    missing_students = github_intf.missing_students(owner, repo)
-    missing_students.each do |student|
-      unless github_intf.students[student][:missing_assignments]
-        github_intf.students[student][:missing_assignments]=[]
+end
+
+case options[:control]
+when "assignment" 
+  if options[:assignment]
+    if options[:assignment].downcase == 'all'
+      assignments = Assignment.all
+      assignments.each do |assignment|
+        update_assignment(assignment, github_intf)
       end
-      github_intf.students[student][:missing_assignments] << "#{owner}/#{repo}"
-    end
-  end
-  
-  
-  sorted_students = github_intf.students.sort_by do |login, student| 
-    if student[:missing_assignments]
-      student[:missing_assignments].length
     else
-      0
+      assignment=Assignment.where(id: options[:assignment].to_i).first
+      update_assignment(assignment, github_intf)
     end
   end
-  sorted_students.reverse!
-  
-  sorted_students.each_with_index do |(login, student), index|
-    if student[:missing_assignments]
-      puts "#{index}) #{student[:name]}, <#{student[:email]}>, #{student[:missing_assignments].length} / #{assignments.length}"
-    end
-  end
+when "students"
+  student_importer = StudentImporter.new
+  student_importer.add_students_to_db
 end
