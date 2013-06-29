@@ -1,0 +1,37 @@
+<h1>Listing assignments</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Description</th>
+      <th>Github login</th>
+      <th>Github repo</th>
+      <th>Assigned date</th>
+      <th>Due date</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @assignments.each do |assignment| %>
+      <tr>
+        <td><%= assignment.title %></td>
+        <td><%= assignment.description %></td>
+        <td><%= assignment.github_login %></td>
+        <td><%= assignment.github_repo %></td>
+        <td><%= assignment.assigned_date %></td>
+        <td><%= assignment.due_date %></td>
+        <td><%= link_to 'Show', assignment %></td>
+        <td><%= link_to 'Edit', edit_assignment_path(assignment) %></td>
+        <td><%= link_to 'Destroy', assignment, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Assignment', new_assignment_path %>

@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  title: MyString
+  description: MyText
+  github_login: MyString
+  github_repo: MyString
+  assigned_date: 2013-06-28 21:30:11
+  due_date: 2013-06-28 21:30:11
+
+two:
+  title: MyString
+  description: MyText
+  github_login: MyString
+  github_repo: MyString
+  assigned_date: 2013-06-28 21:30:11
+  due_date: 2013-06-28 21:30:11

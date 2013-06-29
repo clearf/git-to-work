@@ -1,0 +1,34 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Title:</strong>
+  <%= @assignment.title %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @assignment.description %>
+</p>
+
+<p>
+  <strong>Github login:</strong>
+  <%= @assignment.github_login %>
+</p>
+
+<p>
+  <strong>Github repo:</strong>
+  <%= @assignment.github_repo %>
+</p>
+
+<p>
+  <strong>Assigned date:</strong>
+  <%= @assignment.assigned_date %>
+</p>
+
+<p>
+  <strong>Due date:</strong>
+  <%= @assignment.due_date %>
+</p>
+
+<%= link_to 'Edit', edit_assignment_path(@assignment) %> |
+<%= link_to 'Back', assignments_path %>
