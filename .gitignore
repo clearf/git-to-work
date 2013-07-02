@@ -16,3 +16,4 @@
 /tmp
 
 set_env_var.sh
+.DS_Store

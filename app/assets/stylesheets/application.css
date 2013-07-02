@@ -10,4 +10,8 @@
  *
  *= require_self
  *= require_tree .
+ *= require normalize
+ *= require twitter/bootstrap
+ *= require twitter/bootstrap_override
+ *= require tablesorter/style.css
  */

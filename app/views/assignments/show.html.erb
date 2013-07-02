@@ -1,47 +1,50 @@
 <p id="notice"><%= notice %></p>
 
-<p>
-  <strong>Title:</strong>
-  <%= @assignment.title %>
-</p>
-
-<p>
-  <strong>Description:</strong>
+<div class="page-header">
+  <h1><%= link_to  @assignment.title, 
+  "http://www.github.com/#{@assignment.github_login}/#{@assignment.github_repo}"  %> <br/> <small> 
   <%= @assignment.description %>
-</p>
-
-<p>
-  <strong>Github login:</strong>
-  <%= @assignment.github_login %>
-</p>
-
-<p>
-  <strong>Github repo:</strong>
-  <%= @assignment.github_repo %>
-</p>
+  </small></h1>
+</div>
 
 <p>
   <strong>Assigned date:</strong>
   <%= @assignment.assigned_date %>
-</p>
-
-<p>
   <strong>Due date:</strong>
   <%= @assignment.due_date %>
 </p>
 
 <p>
-  <strong>Completed</strong>
-  <ul>
-    <% @contributions.each do |contribution| %>
-    <li> 
-      <a href='<%= contribution.url %>/files' ><%= contribution.student.name %></a> 
-      <%= contribution.status %> 
-    </li>
+
+  <table class='table table-striped'>
+    <thead>
+      <tr>
+	<th>Student</th>
+	<th>Pull Request Status</th>
+	<th>Date turned in</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @contributions.each do |contribution| %>
+      <tr>
+	<td> 
+	  <%= link_to contribution.student.name, "#{contribution.url}/files", target: "_blank"  %>
+	</td>
+	<td>
+	  <%= contribution.status %> 
+	</td>
+	<td>
+	  <%= format_date(contribution.contribution_created_at) %> 
+	</td>
+      </tr>
+      <% end %> 
+    </tbody>
+  </table>
     
-    <% end %> 
   </ul>
 </p>
 
 <%= link_to 'Edit', edit_assignment_path(@assignment) %> |
+<%= link_to 'Destroy', @assignment, method: :delete, data: { confirm: 'Are you sure?' } %></td> | 
 <%= link_to 'Back', assignments_path %>

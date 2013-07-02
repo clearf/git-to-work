@@ -70,8 +70,8 @@ class GithubInterface
         repo_collaborator_list = @github.repos.collaborators.list(repo_owner, repo_name)
         repo_collaborator_list.body.each do |collaborator| 
           collaborator = {github_login: collaborator['login'], 
-            created_at: pull_request['head']['repo']['created_at'], 
-            updated_at: pull_request['head']['repo']['updated_at'], 
+            created_at: pull_request['created_at'], 
+            updated_at: pull_request['updated_at'], 
             status: pull_request['state'], 
             url: pull_request['html_url'] 
           }

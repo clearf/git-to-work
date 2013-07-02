@@ -19,5 +19,33 @@
   <%= @student.course %>
 </p>
 
+
+<table class='table table-striped'>
+  <thead>
+    <tr>
+      <th>Student</th>
+      <th>Pull Request Status</th>
+      <th>Date turned in</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @contributions.each do |contribution| %>
+    <tr>
+      <td> 
+	<%= link_to contribution.assignment.title, "#{contribution.url}/files", target: "_blank"  %>
+      </td>
+      <td>
+	<%= contribution.status %> 
+      </td>
+      <td>
+	<%= format_date(contribution.contribution_created_at) %> 
+      </td>
+    </tr>
+    <% end %> 
+  </tbody>
+</table>
+
 <%= link_to 'Edit', edit_student_path(@student) %> |
-<%= link_to 'Back', students_path %>
+<%= link_to 'Back', students_path %> | 
+<%= link_to 'Destroy', @student, method: :delete, data: { confirm: 'Are you sure?' } %></td>

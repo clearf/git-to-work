@@ -1,32 +1,35 @@
-<h1>Listing assignments</h1>
+<h1>Assignments</h1>
 
-<table>
+<table id='assignments' class='table table-striped tablesorter'>
   <thead>
     <tr>
       <th>Title</th>
-      <th>Description</th>
-      <th>Github login</th>
       <th>Github repo</th>
       <th>Assigned date</th>
       <th>Due date</th>
-      <th></th>
-      <th></th>
-      <th></th>
+      <th>% turned in</th>
+      <th>% reviewed</th>
     </tr>
   </thead>
 
   <tbody>
     <% @assignments.each do |assignment| %>
       <tr>
-        <td><%= assignment.title %></td>
-        <td><%= assignment.description %></td>
-        <td><%= assignment.github_login %></td>
-        <td><%= assignment.github_repo %></td>
-        <td><%= assignment.assigned_date %></td>
-        <td><%= assignment.due_date %></td>
-        <td><%= link_to 'Show', assignment %></td>
-        <td><%= link_to 'Edit', edit_assignment_path(assignment) %></td>
-        <td><%= link_to 'Destroy', assignment, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to assignment.title, assignment %>
+	<br/>
+        <%= assignment.description %>
+	</td>
+        <td><%= link_to assignment.github_repo.truncate(30) ,
+	"http://www.github.com/#{assignment.github_login}/#{assignment.github_repo}" %></td>
+        <td><%= format_date(assignment.assigned_date) %></td>
+        <td><%= format_date(assignment.due_date) %></td>
+	<td><%= format_pct(Float(assignment.students.uniq.length) / @class_roster.length) %> %</td>
+	<td><%= if assignment.contributions.length > 0
+			format_pct(Float(assignment.contributions.where(status: 'open').length) / assignment.contributions.length, true) 
+		else
+			0
+		end
+	%>% </td>
       </tr>
     <% end %>
   </tbody>

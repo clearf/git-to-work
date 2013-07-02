@@ -1,31 +1,23 @@
 <h1>Listing students</h1>
 
-<table>
+<table id='students' class='table table-striped tablesorter'>
   <thead>
     <tr>
       <th>Name</th>
-      <th>Email</th>
       <th>Github login</th>
-      <th></th>
-      <th></th>
-      <th></th>
+      <th>% complete</th>
     </tr>
   </thead>
-
   <tbody>
     <% @students.each do |student| %>
-      <tr>
-        <td><%= student.name %></td>
-        <td><%= student.email %></td>
-        <td><%= student.github_login %></td>
-        <td><%= link_to 'Show', student %></td>
-        <td><%= link_to 'Edit', edit_student_path(student) %></td>
-        <td><%= link_to 'Destroy', student, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
+    <tr>
+      <td><%= link_to student.name, student  %></td>
+      <td><%= student.github_login %></td>
+      <td><%= format_pct(Float(student.assignments.uniq.length) / @assignments.length) %>%</td>
+    </tr>
     <% end %>
   </tbody>
 </table>
 
 <br>
-
 <%= link_to 'New Student', new_student_path %>

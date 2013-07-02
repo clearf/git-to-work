@@ -12,5 +12,9 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require turbolinks
 //= require_tree .
+//= require twitter/bootstrap
+//= require modernizr-2.6.1.min
+//= require tablesorter/jquery.metadata
+//= require tablesorter/jquery.tablesorter
+

@@ -5,20 +5,12 @@ class AssignmentsController < ApplicationController
   # GET /assignments.json
   def index
     @assignments = Assignment.all
+    @class_roster = Student.all
   end
 
   # GET /assignments/1
   # GET /assignments/1.json
   def show
-    uniq_students = @assignment.students.uniq do |student| 
-      student.id
-    end
-    @contributions = []
-    uniq_students.each do |student|
-      @contributions << @assignment.contributions.where(student_id: student.id, 
-                                                       assignment_id: @assignment.id).first
-                                                       #order: 'contribution_updated_at desc'
-    end
   end
 
   # GET /assignments/new
@@ -74,6 +66,14 @@ class AssignmentsController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_assignment
       @assignment = Assignment.find(params[:id])
+      uniq_students = @assignment.students.uniq do |student| 
+        student.id
+      end
+      @contributions = []
+      uniq_students.each do |student|
+        @contributions << @assignment.contributions.where(student_id: student.id, 
+                                                          assignment_id: @assignment.id).order('contribution_updated_at desc').first
+      end
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
