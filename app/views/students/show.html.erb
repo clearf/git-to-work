@@ -1,29 +1,14 @@
 <p id="notice"><%= notice %></p>
 
-<p>
-  <strong>Name:</strong>
-  <%= @student.name %>
-</p>
-
-<p>
-  <strong>Email:</strong>
-  <%= @student.email %>
-</p>
-
-<p>
-  <strong>Github login:</strong>
-  <%= @student.github_login %>
-</p>
-<p>
-  <strong>Course login:</strong>
-  <%= @student.course %>
-</p>
+  <%= link_to @student.name, "mailto: %{@student.email}" %> <br/>
+  <%= link_to "#{@student.github_login} (github)", "http://www.github.com/#{@student.github_login}" %> <br/>
+  <small> Course: <%= @student.course %> </small>
 
 
-<table class='table table-striped'>
+<table id="completed-assignments" class='table table-striped tablesorter'>
   <thead>
     <tr>
-      <th>Student</th>
+      <th>Repo</th>
       <th>Pull Request Status</th>
       <th>Date turned in</th>
     </tr>
@@ -33,16 +18,43 @@
     <% @contributions.each do |contribution| %>
     <tr>
       <td> 
-	<%= link_to contribution.assignment.title, "#{contribution.url}/files", target: "_blank"  %>
+	<%= link_to contribution.assignment.title, contribution.assignment %>
       </td>
       <td>
-	<%= contribution.status %> 
+	<%= link_to "#{contribution.status} (github)", "#{contribution.url}/files", target: "_blank"  %>
       </td>
       <td>
 	<%= format_date(contribution.contribution_created_at) %> 
       </td>
     </tr>
     <% end %> 
+  </tbody>
+</table>
+
+
+<table id='missing-assignments' class='table table-striped tablesorter'>
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Github repo</th>
+      <th>Assigned date</th>
+      <th>Due date</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @missing_assignment.each do |assignment| %>
+      <tr>
+        <td><%= link_to assignment.title, assignment %>
+	<br/>
+        <%= assignment.description %>
+	</td>
+        <td><%= link_to assignment.github_repo.truncate(30) ,
+	"http://www.github.com/#{assignment.github_login}/#{assignment.github_repo}" %></td>
+        <td><%= format_date(assignment.assigned_date) %></td>
+        <td><%= format_date(assignment.due_date) %></td>
+      </tr>
+    <% end %>
   </tbody>
 </table>
 

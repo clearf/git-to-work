@@ -1,0 +1,8 @@
+<% navigation = [['/assignments/', 'Assignments'], ['/students/', 'Students'] ]%> 
+
+  <% navigation.each do |n| 
+  href, name = n %>
+          <li id=<%= name %>-nav' class=<%= 'active' if @page_key==href %> >
+  <%= link_to name, href %>
+	</li>
+  <% end %> 

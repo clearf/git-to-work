@@ -6,11 +6,13 @@ class AssignmentsController < ApplicationController
   def index
     @assignments = Assignment.all
     @class_roster = Student.all
+    @page_key='/assignments/'
   end
 
   # GET /assignments/1
   # GET /assignments/1.json
   def show
+    @missing_students = (Student.all - @assignment.students)
   end
 
   # GET /assignments/new
@@ -74,6 +76,7 @@ class AssignmentsController < ApplicationController
         @contributions << @assignment.contributions.where(student_id: student.id, 
                                                           assignment_id: @assignment.id).order('contribution_updated_at desc').first
       end
+      @page_key='/assignments/'
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

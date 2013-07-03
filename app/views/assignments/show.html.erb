@@ -4,6 +4,7 @@
   <h1><%= link_to  @assignment.title, 
   "http://www.github.com/#{@assignment.github_login}/#{@assignment.github_repo}"  %> <br/> <small> 
   <%= @assignment.description %>
+  <%= link_to 'Back', assignments_path, class: "pull-right"%>
   </small></h1>
 </div>
 
@@ -14,25 +15,23 @@
   <%= @assignment.due_date %>
 </p>
 
-<p>
-
-  <table class='table table-striped'>
-    <thead>
-      <tr>
-	<th>Student</th>
-	<th>Pull Request Status</th>
-	<th>Date turned in</th>
-      </tr>
-    </thead>
+<table id='completed-students' class='table table-striped tablesorter'>
+  <thead>
+    <tr>
+      <th>Student</th>
+      <th>Pull Request Status</th>
+      <th>Date turned in</th>
+    </tr>
+  </thead>
 
     <tbody>
       <% @contributions.each do |contribution| %>
       <tr>
 	<td> 
-	  <%= link_to contribution.student.name, "#{contribution.url}/files", target: "_blank"  %>
+	  <%= link_to contribution.student.name, contribution.student %>
 	</td>
 	<td>
-	  <%= contribution.status %> 
+	  <%= link_to "#{contribution.status} (github)", "#{contribution.url}/files", target: "_blank"  %>
 	</td>
 	<td>
 	  <%= format_date(contribution.contribution_created_at) %> 
@@ -41,10 +40,24 @@
       <% end %> 
     </tbody>
   </table>
-    
-  </ul>
-</p>
 
+<table id='missing-students' class='table table-striped tablesorter'>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Github login</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @missing_students.each do |student| %>
+    <tr>
+      <td><%= link_to student.name, student  %></td>
+      <td><%= student.github_login %></td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>
+    
 <%= link_to 'Edit', edit_assignment_path(@assignment) %> |
 <%= link_to 'Destroy', @assignment, method: :delete, data: { confirm: 'Are you sure?' } %></td> | 
 <%= link_to 'Back', assignments_path %>

@@ -6,6 +6,7 @@ class StudentsController < ApplicationController
   def index
     @students = Student.all
     @assignments = Assignment.all
+    @page_key='/students/'
   end
 
   # GET /students/1
@@ -19,6 +20,8 @@ class StudentsController < ApplicationController
       @contributions << assignment.contributions.where(student_id: @student.id, 
                                                        assignment_id: assignment.id).order('contribution_updated_at desc').first
     end
+    
+    @missing_assignment = (Assignment.all - uniq_assignments)
   end
 
   # GET /students/new
@@ -83,6 +86,7 @@ class StudentsController < ApplicationController
         @contributions << @student.contributions.where(assignment_id: assignment.id, 
                                                         student_id: @student.id).order('contribution_updated_at desc').first
       end
+      @page_key='/students/'
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
