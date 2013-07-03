@@ -1,6 +1,5 @@
 require 'github_api'
 require 'optparse'
-require 'pry'
 require_relative '../../config/environment.rb'
 
 class StudentImporter
@@ -97,7 +96,7 @@ OptionParser.new do |opts|
     options[:assignment] = v 
     options[:control] = "assignment"
   }
-  opts.on('--students=[file]', 'Parse data for a specific assignment') { options[:control] = "students" }
+  opts.on('--students [filename]', 'Parse data for a specific assignment') { |v| options[:control] = "students"; options[:students_file] = v }
   opts.on('-v', '--verbose', 'verbose') { |v| options[:verbose] = v }
 end.parse!
 
@@ -139,6 +138,6 @@ when "assignment"
     end
   end
 when "students"
-  student_importer = StudentImporter.new
+  student_importer = StudentImporter.new(options[:students_file])
   student_importer.add_students_to_db
 end
