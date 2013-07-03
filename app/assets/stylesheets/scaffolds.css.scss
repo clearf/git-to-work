@@ -4,6 +4,10 @@ html, body {
     background-image: image-url('sl-background.png');
 }
 
+body{
+  padding: 24px;
+}
+
 pre {
   background-color: #eee;
   padding: 10px;
@@ -50,7 +54,7 @@ div {
 }
 
 /* Can probably rewrite some of this stuff in Sassy CSS */
-#main-container, div#footer { 
+#main-container, div#footer {
     background-color: #fff;
     overflow: auto;
 
@@ -61,7 +65,7 @@ div {
     padding-right: 80px;
 }
 
-#main-container { 
+#main-container {
     min-height: 90%;
 }
 
@@ -78,12 +82,12 @@ div#footer {
     clear:both;
     background-color: #fff;
     overflow: auto;
-} 
+}
 
-/* Logo */ 
+/* Logo */
 
-#sl-logo { 
-    width: 8em; 
+#sl-logo {
+    width: 8em;
     height: 4.3em;
     float: right;
     padding-top: 50px
@@ -95,17 +99,17 @@ div#footer {
 }
 
 
-#page-content { 
+#page-content {
     margin-left: 10px;
     padding-top: 20px;
     padding-left: 40px;
 }
 
-/* Twitter buttons */ 
+/* Twitter buttons */
 
-.social-buttons { 
-    padding-top: 80px; 
-    padding-right: 15px; 
+.social-buttons {
+    padding-top: 80px;
+    padding-right: 15px;
 }
 
 
@@ -118,7 +122,7 @@ div#footer {
 }
 
 /* White paper style sheet */
-.whitepaper p { 
+.whitepaper p {
 	font: normal normal 16px/22px Georgia, Times, serif;
 
 }
@@ -192,4 +196,4 @@ div#footer {
 .whitepaper .sidebar p {
 	font: normal normal 14px/22px Helvetica, Arial, Verdana, sans-serif;
 	color: #666;
-}	
+}
