@@ -11,7 +11,11 @@
     <tr>
       <td><%= link_to student.name, student  %></td>
       <td><%= student.github_login %></td>
-      <td><%= format_pct(Float(student.assignments.uniq.length) / @assignments.length) if @assignments %>%</td>
+      <td><%= if @assignments.length > 0 and  student.assignments.uniq.length > 0 
+	      format_pct(Float(student.assignments.uniq.length) / @assignments.length) 
+      else
+	      0 
+      end %>%</td>
     </tr>
     <% end %>
   </tbody>
