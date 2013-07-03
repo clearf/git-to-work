@@ -4,7 +4,19 @@ source 'https://rubygems.org'
 gem 'rails', '4.0.0.rc2'
 
 # Use sqlite3 as the database for Active Record
-gem 'sqlite3'
+group :development, :test do
+ gem 'sqlite3'
+end
+
+# for heroku
+group :production do
+  gem 'pg'
+  gem 'rails_12factor'
+  gem 'newrelic_rpm'
+end
+
+gem 'unicorn'
+gem 'unicorn-worker-killer'
 
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 4.0.0.rc2'
@@ -36,9 +48,6 @@ end
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
-
-# Use unicorn as the app server
-# gem 'unicorn'
 
 # Use Capistrano for deployment
 # gem 'capistrano', group: :development
