@@ -97,7 +97,7 @@ OptionParser.new do |opts|
     options[:assignment] = v 
     options[:control] = "assignment"
   }
-  opts.on('--students', 'Parse data for a specific assignment') { options[:control] = "students" }
+  opts.on('--students=[file]', 'Parse data for a specific assignment') { options[:control] = "students" }
   opts.on('-v', '--verbose', 'verbose') { |v| options[:verbose] = v }
 end.parse!
 

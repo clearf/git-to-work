@@ -1,7 +1,6 @@
 alan-appelstein|Alan Appelstein|alan.appelstein@verizon.net
 ichthala|Alice Mottola|alice.mottola@gmail.com
 alinaguzman|Alina Guzman|alinochka8@gmail.com
-silverballs|Andrew Silbersmith|asilbersmith11@gmail.com
 aj2w|Anuj Jhunjhunwala|anuj.jhunjhunwala@gmail.com
 bisraeli|Ben Israeli|jisraeli@gmail.com
 beryls|Beryl Schragger|beryl.schragger@gmail.com
@@ -19,6 +18,7 @@ mvanger|Mike Vanger|mvanger@nyu.edu
 nicklombardi|Nick Lombardi|nicklombardi@gmail.com
 tcclevela|Teddy Cleveland|tcclevela@gmail.com
 bigfattunafish|Thomas Yu|thomas.whyyou@ymail.com
+corgosinho|Thiago Corgosinho|thiago.corgosinho@gmail.com
 tjblonsk|Tim Blonski|tim.blonski@gmail.com
 tommyb67|Tom Brennan|tommybrennan@gmail.com
 tdouglas|Tricia Douglas|tdouglas@seamlessTL.com
