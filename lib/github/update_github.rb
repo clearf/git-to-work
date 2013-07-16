@@ -1,25 +1,18 @@
 require 'optparse'
 require_relative '../../config/environment.rb'
-require_relative './git_intf'
+require_relative './git_intf.rb'
 
-
-# A hacked script to let us update one or all assignments
-# Probably should replace with straight rake tasks at some point in time.
 
 options = {}
-opts = OptionParser.new do |opts|
+OptionParser.new do |opts|
   opts.banner = "Usage: #{__FILE__} [options]"
-  opts.on('--assignment=id', 'Parse data for a specific assignment, id=all for all assignments') { |v| 
+  opts.on('--assignment=id', 'Parse data for a specific assignment') { |v| 
     options[:assignment] = v 
     options[:control] = "assignment"
   }
   opts.on('-v', '--verbose', 'verbose') { |v| options[:verbose] = v }
-  opts.on("-h", "--help", "Show this message") do
-    puts opts
-    exit
-  end
-  opts.parse!
-end
+end.parse!
+
 
 github_intf = GitHelper::APIInterface.new(options)
 
@@ -44,7 +37,6 @@ def update_assignment(assignment, github_intf)
     end
   end
 end
-
 
 case options[:control]
 when "assignment" 

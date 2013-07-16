@@ -56,3 +56,4 @@ end
 # gem 'debugger', group: [:development, :test]
 
 gem 'github_api'
+gem 'dotenv-rails', :groups => [:development, :test]
