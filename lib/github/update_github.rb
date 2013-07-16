@@ -2,6 +2,8 @@ require 'optparse'
 require_relative '../../config/environment.rb'
 require_relative './git_intf.rb'
 
+# A hacked script to let us update one or all assignments
+# Probably should replace with straight rake tasks at some point in time.
 
 options = {}
 OptionParser.new do |opts|
