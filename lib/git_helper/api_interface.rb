@@ -1,7 +1,7 @@
 require 'github_api'
 
 module GitHelper
-  class APIInterface
+  class ApiInterface
     attr_accessor :options
     attr_reader :github, :collaborators
     
@@ -52,6 +52,30 @@ module GitHelper
           abort "Forbidden: Too many api calls. Perhaps your API KEY environment variables are not initialized?"
         end
       end 
+
+    end
+
+
+    def update_assignment(assignment)
+      login, repo = assignment[:github_login], assignment[:github_repo]
+      process_pull_requests(login, repo)
+
+      # Clear old assignments out
+
+      assignment.students.clear
+      students = []
+      @collaborators[key(login,repo)].each do |collaborator|
+        student = Student.where(github_login: collaborator[:github_login]).first
+        if student
+          assignment.students << student
+          # Get the contribution that was just created
+          contribution = assignment.contributions.last
+          contribution.update_attributes(url: collaborator[:url], 
+                                         contribution_created_at: collaborator[:created_at], 
+                                         contribution_updated_at: collaborator[:updated_at], 
+                                         status: collaborator[:status] ) 
+        end
+      end
     end
     
     def key(owner,name)
